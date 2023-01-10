@@ -244,6 +244,12 @@ class Showcase extends StatefulWidget {
   /// will still provide a callback.
   final VoidCallback? onBarrierClick;
 
+  /// Margin left right for show case. Defaults to 20.
+  final double tooltipScreenEdgePadding;
+
+  /// Padding left right for show case. Defaults to 15.
+  final double tooltipTextPadding;
+
   const Showcase({
     required this.key,
     required this.description,
@@ -288,6 +294,8 @@ class Showcase extends StatefulWidget {
     this.titleTextDirection,
     this.descriptionTextDirection,
     this.onBarrierClick,
+    this.tooltipScreenEdgePadding = 20,
+    this.tooltipTextPadding = 15,
   })  : height = null,
         width = null,
         container = null,
@@ -325,6 +333,8 @@ class Showcase extends StatefulWidget {
     this.disableDefaultTargetGestures = false,
     this.tooltipPosition,
     this.onBarrierClick,
+    this.tooltipScreenEdgePadding = 20,
+    this.tooltipTextPadding = 15,
   })  : showArrow = false,
         onToolTipClick = null,
         scaleAnimationDuration = const Duration(milliseconds: 300),
@@ -573,6 +583,8 @@ class _ShowcaseState extends State<Showcase> {
             descriptionPadding: widget.descriptionPadding,
             titleTextDirection: widget.titleTextDirection,
             descriptionTextDirection: widget.descriptionTextDirection,
+            tooltipScreenEdgePadding: widget.tooltipScreenEdgePadding,
+            tooltipTextPadding: widget.tooltipTextPadding,
           ),
         ],
       ],
