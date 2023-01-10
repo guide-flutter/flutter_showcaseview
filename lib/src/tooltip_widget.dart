@@ -28,8 +28,6 @@ import 'enum.dart';
 import 'get_position.dart';
 import 'measure_size.dart';
 
-const _kDefaultPaddingFromParent = 14.0;
-
 class ToolTipWidget extends StatefulWidget {
   final GetPosition? position;
   final Offset? offset;
@@ -61,6 +59,9 @@ class ToolTipWidget extends StatefulWidget {
   final EdgeInsets? descriptionPadding;
   final TextDirection? titleTextDirection;
   final TextDirection? descriptionTextDirection;
+  final double tooltipScreenEdgePadding;
+  final double tooltipTextPadding;
+  final double paddingFromParent;
 
   const ToolTipWidget({
     Key? key,
@@ -94,6 +95,9 @@ class ToolTipWidget extends StatefulWidget {
     this.descriptionPadding,
     this.titleTextDirection,
     this.descriptionTextDirection,
+    this.tooltipScreenEdgePadding = 20,
+    this.tooltipTextPadding = 15,
+    this.paddingFromParent = 14,
   }) : super(key: key);
 
   @override
@@ -112,8 +116,6 @@ class _ToolTipWidgetState extends State<ToolTipWidget>
   late final Animation<double> _scaleAnimation;
 
   double tooltipWidth = 0;
-  double tooltipScreenEdgePadding = 20;
-  double tooltipTextPadding = 15;
 
   TooltipPosition findPositionForContent(Offset position) {
     var height = 120.0;
@@ -162,10 +164,10 @@ class _ToolTipWidgetState extends State<ToolTipWidget>
             (widget.descriptionPadding?.right ?? 0) +
             (widget.descriptionPadding?.left ?? 0));
     var maxTextWidth = max(titleLength, descriptionLength);
-    if (maxTextWidth > widget.screenSize!.width - tooltipScreenEdgePadding) {
-      tooltipWidth = widget.screenSize!.width - tooltipScreenEdgePadding;
+    if (maxTextWidth > widget.screenSize!.width - widget.tooltipScreenEdgePadding) {
+      tooltipWidth = widget.screenSize!.width - widget.tooltipScreenEdgePadding;
     } else {
-      tooltipWidth = maxTextWidth + tooltipTextPadding;
+      tooltipWidth = maxTextWidth + widget.tooltipTextPadding;
     }
   }
 
@@ -176,8 +178,8 @@ class _ToolTipWidgetState extends State<ToolTipWidget>
       double leftPositionValue = widget.position!.getCenter() - (width * 0.5);
       if ((leftPositionValue + width) > MediaQuery.of(context).size.width) {
         return null;
-      } else if ((leftPositionValue) < _kDefaultPaddingFromParent) {
-        return _kDefaultPaddingFromParent;
+      } else if ((leftPositionValue) < widget.paddingFromParent) {
+        return widget.paddingFromParent;
       } else {
         return leftPositionValue;
       }
@@ -195,7 +197,7 @@ class _ToolTipWidgetState extends State<ToolTipWidget>
         final rightPosition = widget.position!.getCenter() + (width * 0.5);
 
         return (rightPosition + width) > MediaQuery.of(context).size.width
-            ? _kDefaultPaddingFromParent
+            ? widget.paddingFromParent
             : null;
       } else {
         return null;
@@ -583,7 +585,7 @@ class _Arrow extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _Arrow oldDelegate) {
+  bool shouldRepaint(_Arrow oldDelegate) {
     return oldDelegate.strokeColor != strokeColor ||
         oldDelegate.paintingStyle != paintingStyle ||
         oldDelegate.strokeWidth != strokeWidth;
