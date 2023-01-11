@@ -28,8 +28,6 @@ import 'enum.dart';
 import 'get_position.dart';
 import 'measure_size.dart';
 
-const _kDefaultPaddingFromParent = 14.0;
-
 class ToolTipWidget extends StatefulWidget {
   final GetPosition? position;
   final Offset? offset;
@@ -61,6 +59,7 @@ class ToolTipWidget extends StatefulWidget {
   final EdgeInsets? descriptionPadding;
   final double tooltipScreenEdgePadding;
   final double tooltipTextPadding;
+  final double paddingFromParent;
 
   const ToolTipWidget({
     Key? key,
@@ -94,6 +93,7 @@ class ToolTipWidget extends StatefulWidget {
     this.descriptionPadding,
     this.tooltipScreenEdgePadding = 20,
     this.tooltipTextPadding = 15,
+    this.paddingFromParent = 14,
   }) : super(key: key);
 
   @override
@@ -170,8 +170,8 @@ class _ToolTipWidgetState extends State<ToolTipWidget>
       double leftPositionValue = widget.position!.getCenter() - (width * 0.5);
       if ((leftPositionValue + width) > MediaQuery.of(context).size.width) {
         return null;
-      } else if ((leftPositionValue) < _kDefaultPaddingFromParent) {
-        return _kDefaultPaddingFromParent;
+      } else if ((leftPositionValue) < widget.paddingFromParent) {
+        return widget.paddingFromParent;
       } else {
         return leftPositionValue;
       }
@@ -189,7 +189,7 @@ class _ToolTipWidgetState extends State<ToolTipWidget>
         final rightPosition = widget.position!.getCenter() + (width * 0.5);
 
         return (rightPosition + width) > MediaQuery.of(context).size.width
-            ? _kDefaultPaddingFromParent
+            ? widget.paddingFromParent
             : null;
       } else {
         return null;

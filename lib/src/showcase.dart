@@ -239,6 +239,9 @@ class Showcase extends StatefulWidget {
   /// Padding left right for show case. Defaults to 15.
   final double tooltipTextPadding;
 
+  /// Default padding left and right
+  final double paddingFromParent;
+
   const Showcase({
     required this.key,
     required this.child,
@@ -283,6 +286,7 @@ class Showcase extends StatefulWidget {
     this.descriptionPadding,
     this.tooltipScreenEdgePadding = 20,
     this.tooltipTextPadding = 15,
+    this.paddingFromParent = 14,
   })  : height = null,
         width = null,
         container = null,
@@ -327,6 +331,7 @@ class Showcase extends StatefulWidget {
     this.tooltipPosition,
     this.tooltipScreenEdgePadding = 20,
     this.tooltipTextPadding = 15,
+    this.paddingFromParent = 14,
   })  : showArrow = false,
         onToolTipClick = null,
         scaleAnimationDuration = const Duration(milliseconds: 300),
@@ -581,6 +586,7 @@ class _ShowcaseState extends State<Showcase> {
                   descriptionPadding: widget.descriptionPadding,
                   tooltipScreenEdgePadding: widget.tooltipScreenEdgePadding,
                   tooltipTextPadding: widget.tooltipTextPadding,
+                  paddingFromParent: widget.paddingFromParent,
                 ),
             ],
           )
