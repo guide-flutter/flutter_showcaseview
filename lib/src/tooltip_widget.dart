@@ -57,9 +57,11 @@ class ToolTipWidget extends StatefulWidget {
   final TooltipPosition? tooltipPosition;
   final EdgeInsets? titlePadding;
   final EdgeInsets? descriptionPadding;
+  final EdgeInsets? containerPadding;
   final double tooltipScreenEdgePadding;
   final double tooltipTextPadding;
   final double paddingFromParent;
+  final bool usePaddingLeftFromParent;
 
   const ToolTipWidget({
     Key? key,
@@ -91,9 +93,11 @@ class ToolTipWidget extends StatefulWidget {
     this.tooltipPosition,
     this.titlePadding,
     this.descriptionPadding,
+    this.containerPadding,
     this.tooltipScreenEdgePadding = 20,
     this.tooltipTextPadding = 15,
     this.paddingFromParent = 14,
+    this.usePaddingLeftFromParent = false,
   }) : super(key: key);
 
   @override
@@ -170,7 +174,11 @@ class _ToolTipWidgetState extends State<ToolTipWidget>
       double leftPositionValue = widget.position!.getCenter() - (width * 0.5);
       if ((leftPositionValue + width) > MediaQuery.of(context).size.width) {
         return null;
-      } else if ((leftPositionValue) < widget.paddingFromParent) {
+      }
+      if (widget.usePaddingLeftFromParent) {
+        return widget.paddingFromParent;
+      }
+      if ((leftPositionValue) < widget.paddingFromParent) {
         return widget.paddingFromParent;
       } else {
         return leftPositionValue;
@@ -342,6 +350,14 @@ class _ToolTipWidgetState extends State<ToolTipWidget>
     }
 
     if (widget.container == null) {
+      EdgeInsetsGeometry? containerPadding;
+      if (widget.showArrow) {
+        containerPadding = widget.containerPadding ??
+            EdgeInsets.only(
+              top: paddingTop - (isArrowUp ? arrowHeight : 0),
+              bottom: paddingBottom - (isArrowUp ? 0 : arrowHeight),
+            );
+      }
       return Positioned(
         top: contentY,
         left: _getLeft(),
@@ -363,12 +379,7 @@ class _ToolTipWidgetState extends State<ToolTipWidget>
               child: Material(
                 color: Colors.transparent,
                 child: Container(
-                  padding: widget.showArrow
-                      ? EdgeInsets.only(
-                          top: paddingTop - (isArrowUp ? arrowHeight : 0),
-                          bottom: paddingBottom - (isArrowUp ? 0 : arrowHeight),
-                        )
-                      : null,
+                  padding: containerPadding,
                   child: Stack(
                     alignment: isArrowUp
                         ? Alignment.topLeft

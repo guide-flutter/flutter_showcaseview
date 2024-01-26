@@ -233,6 +233,9 @@ class Showcase extends StatefulWidget {
   /// Provides padding around the description. Default padding is zero.
   final EdgeInsets? descriptionPadding;
 
+  /// Provides padding around the container. Default padding is null.
+  final EdgeInsets? containerPadding;
+
   /// Margin left right for show case. Defaults to 20.
   final double tooltipScreenEdgePadding;
 
@@ -241,6 +244,9 @@ class Showcase extends StatefulWidget {
 
   /// Default padding left and right
   final double paddingFromParent;
+
+  /// Force using paddingFromParent for padding Left. Default is false
+  final bool usePaddingLeftFromParent;
 
   const Showcase({
     required this.key,
@@ -284,9 +290,11 @@ class Showcase extends StatefulWidget {
     this.tooltipPosition,
     this.titlePadding,
     this.descriptionPadding,
+    this.containerPadding,
     this.tooltipScreenEdgePadding = 20,
     this.tooltipTextPadding = 15,
     this.paddingFromParent = 14,
+    this.usePaddingLeftFromParent = false,
   })  : height = null,
         width = null,
         container = null,
@@ -332,6 +340,7 @@ class Showcase extends StatefulWidget {
     this.tooltipScreenEdgePadding = 20,
     this.tooltipTextPadding = 15,
     this.paddingFromParent = 14,
+    this.usePaddingLeftFromParent = false,
   })  : showArrow = false,
         onToolTipClick = null,
         scaleAnimationDuration = const Duration(milliseconds: 300),
@@ -350,6 +359,7 @@ class Showcase extends StatefulWidget {
         tooltipPadding = const EdgeInsets.symmetric(vertical: 8),
         titlePadding = null,
         descriptionPadding = null,
+        containerPadding = null,
         assert(overlayOpacity >= 0.0 && overlayOpacity <= 1.0,
             "overlay opacity must be between 0 and 1.");
 
@@ -584,9 +594,11 @@ class _ShowcaseState extends State<Showcase> {
                   tooltipPosition: widget.tooltipPosition,
                   titlePadding: widget.titlePadding,
                   descriptionPadding: widget.descriptionPadding,
+                  containerPadding: widget.containerPadding,
                   tooltipScreenEdgePadding: widget.tooltipScreenEdgePadding,
                   tooltipTextPadding: widget.tooltipTextPadding,
                   paddingFromParent: widget.paddingFromParent,
+                  usePaddingLeftFromParent: widget.usePaddingLeftFromParent,
                 ),
             ],
           )
