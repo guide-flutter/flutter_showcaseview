@@ -29,7 +29,6 @@ import 'package:flutter/material.dart';
 import 'enum.dart';
 import 'extension.dart';
 import 'get_position.dart';
-import 'layout_overlays.dart';
 import 'shape_clipper.dart';
 import 'showcase_widget.dart';
 import 'tooltip_widget.dart';
@@ -383,34 +382,49 @@ class _ShowcaseState extends State<Showcase> {
     _enableShowcase = ShowCaseWidget.of(context).enableShowcase;
 
     if (_enableShowcase) {
-      position ??= GetPosition(
-        key: widget.key,
-        padding: widget.targetPadding,
-        screenWidth: MediaQuery.of(context).size.width,
-        screenHeight: MediaQuery.of(context).size.height,
-      );
       showOverlay();
     }
   }
 
   /// show overlay if there is any target widget
   void showOverlay() {
-    final activeStep = ShowCaseWidget.activeTargetWidget(context);
+    final activeStepKey = ShowCaseWidget.activeTargetWidget(context);
+    final isActiveStep = activeStepKey == widget.key;
     setState(() {
-      _showShowCase = activeStep == widget.key;
+      _showShowCase = isActiveStep;
     });
+    debugPrint('showOverlay: isActiveStep = $isActiveStep');
 
-    if (activeStep == widget.key) {
+    if (isActiveStep) {
+      _addShowCase();
       if (ShowCaseWidget.of(context).enableAutoScroll) {
         _scrollIntoView();
       }
 
       if (showCaseWidgetState.autoPlay) {
-        timer = Timer(
-            Duration(seconds: showCaseWidgetState.autoPlayDelay.inSeconds),
-            _nextIfAny);
+        timer = Timer(Duration(seconds: showCaseWidgetState.autoPlayDelay.inSeconds), _nextIfAny);
       }
     }
+  }
+
+  void _addShowCase() {
+    final size = MediaQuery.of(context).size;
+    final position = GetPosition(
+      key: widget.key,
+      padding: widget.targetPadding,
+      screenWidth: size.width,
+      screenHeight: size.height,
+    );
+    this.position = position;
+    final showcase = buildOverlayOnTarget(
+      Offset(position.getLeft(), position.getTop()),
+      Size(position.getWidth(), position.getHeight()),
+      position.getRect(),
+      size,
+    );
+    ambiguate(WidgetsBinding.instance)?.addPostFrameCallback((_) {
+      showCaseWidgetState.addShowCase(showcase);
+    });
   }
 
   void _scrollIntoView() {
@@ -431,24 +445,7 @@ class _ShowcaseState extends State<Showcase> {
 
   @override
   Widget build(BuildContext context) {
-    if (_enableShowcase) {
-      return AnchoredOverlay(
-        overlayBuilder: (context, rectBound, offset) {
-          final size = MediaQuery.of(context).size;
-          position = GetPosition(
-            key: widget.key,
-            padding: widget.targetPadding,
-            screenWidth: size.width,
-            screenHeight: size.height,
-          );
-          return buildOverlayOnTarget(offset, rectBound.size, rectBound, size);
-        },
-        showOverlay: true,
-        child: widget.child,
-      );
-    } else {
-      return widget.child;
-    }
+    return widget.child;
   }
 
   Future<void> _nextIfAny() async {
@@ -498,6 +495,10 @@ class _ShowcaseState extends State<Showcase> {
     Rect rectBound,
     Size screenSize,
   ) {
+    debugPrint('buildOverlayOnTarget: offset = $offset');
+    debugPrint('buildOverlayOnTarget: size = $size');
+    debugPrint('buildOverlayOnTarget: rectBound = $rectBound');
+    debugPrint('buildOverlayOnTarget: screenSize = $screenSize');
     var blur = 0.0;
     if (_showShowCase) {
       blur = widget.blurValue ?? showCaseWidgetState.blurValue;
@@ -564,6 +565,7 @@ class _ShowcaseState extends State<Showcase> {
                 ),
               if (!_isScrollRunning)
                 ToolTipWidget(
+                  key: ValueKey(widget.key.hashCode),
                   position: position,
                   offset: offset,
                   screenSize: screenSize,

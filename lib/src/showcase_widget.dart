@@ -130,6 +130,7 @@ class ShowCaseWidgetState extends State<ShowCaseWidget> {
   late bool enableAutoScroll;
   late bool disableBarrierInteraction;
   late bool enableShowcase;
+  Widget? _showCaseWidget;
 
   /// Returns value of  [ShowCaseWidget.blurValue]
   double get blurValue => widget.blurValue;
@@ -155,6 +156,12 @@ class ShowCaseWidgetState extends State<ShowCaseWidget> {
     enableAutoScroll = widget.enableAutoScroll;
     disableBarrierInteraction = widget.disableBarrierInteraction;
     enableShowcase = widget.enableShowcase;
+  }
+
+  void addShowCase(Widget showcase) {
+    setState(() {
+      _showCaseWidget = showcase;
+    });
   }
 
   /// Starts Showcase view from the beginning of specified list of widget ids.
@@ -252,13 +259,19 @@ class ShowCaseWidgetState extends State<ShowCaseWidget> {
   void _cleanupAfterSteps() {
     ids = null;
     activeWidgetId = null;
+    _showCaseWidget = null;
   }
 
   @override
   Widget build(BuildContext context) {
     return _InheritedShowCaseView(
       activeWidgetIds: ids?.elementAt(activeWidgetId!),
-      child: widget.builder,
+      child: Stack(
+        children: [
+          widget.builder,
+          _showCaseWidget ?? const SizedBox.shrink(),
+        ],
+      ),
     );
   }
 }
